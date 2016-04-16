@@ -32,7 +32,7 @@ def without_duplicates(words):
         [2, 33333, 111111]
     """
 
-    return []
+    return list(set(words))
 
 
 def find_unique_common_items(items1, items2):
@@ -61,8 +61,10 @@ def find_unique_common_items(items1, items2):
         >>> sorted(find_unique_common_items(["2", "1", 2], [2, 1]))
         [2]
     """
+    items1 = set(items1)
+    items2 = set(items2)
 
-    return []
+    return list(items1 & items2)
 
 
 def count_words(phrase):
@@ -89,8 +91,15 @@ def count_words(phrase):
         >>> print_dict(count_words("Porcupine see, porcupine do."))
         {'Porcupine': 1, 'do.': 1, 'porcupine': 1, 'see,': 1}
     """
+    phrase = phrase.split()
+    word_counts = {}
+    for word in phrase:
+        if word in word_counts:
+            word_counts[word] = word_counts[word] + 1
+        else: word_counts[word] = 1
 
-    return {}
+
+    return word_counts
 
 
 def translate_to_pirate_talk(phrase):
@@ -131,8 +140,38 @@ def translate_to_pirate_talk(phrase):
         >>> translate_to_pirate_talk("my student is not a man!")
         'me swabbie be not a man!'
     """
+    # english to pirate dictionary
+    ENG_TO_PIRATE = {
+        "sir": "matey",
+        "hotel": "fleabag inn",
+        "student": "swabbie",
+        "boy": "matey",
+        "professor": "floul blaggart",
+        "restaurant": "galley",
+        "your": "yer",
+        "excuse": "arr",
+        "students": "swabbies",
+        "are": "be",
+        "restroom": "head",
+        "my": "me",
+        "is": "be",
+        "man": "matey"
+    }
 
-    return ""
+    # tokenizes input string into a list of words
+    phrase = phrase.split()
+
+    # loops through phrase and changes word to pirate counterpart
+    for word in phrase:
+        word_index = phrase.index(word)
+        if word in ENG_TO_PIRATE:
+            phrase[word_index] = ENG_TO_PIRATE[word]
+
+    # converts list back to string
+    phrase = " ".join(phrase)
+
+
+    return phrase
 
 
 def sort_by_word_length(words):
@@ -148,8 +187,20 @@ def sort_by_word_length(words):
         >>> sort_by_word_length(["ok", "an", "apple", "a", "day"])
         [(1, ['a']), (2, ['ok', 'an']), (3, ['day']), (5, ['apple'])]
     """
+    lengths = {}
+    # builds a dictionary using the length of words as a key and a list of words that length as a value
+    for word in words:
+        key = len(word)
+        if key in lengths:
+            lengths[key].append(word)
+        else:
+            lengths[key] = [word]
+    # builds a list of tuples for key-value pairs in the dictionary 'lengths'
+    word_groups = lengths.items()
 
-    return []
+    return sorted(word_groups)
+
+
 
 
 def get_sum_zero_pairs(numbers):
@@ -178,8 +229,22 @@ def get_sum_zero_pairs(numbers):
         >>> sort_pairs( get_sum_zero_pairs([1, 3, -1, 1, 1, 0]) )
         [[-1, 1], [0, 0]]
     """
+    # loops through list 'numbers', finds 0-pairs (and sorts them) and if they aren't already on the list, adds them
+    zero_pairs = []
+    for num_a in numbers:
+        for num_b in numbers:
+            if num_a + num_b == 0:
+                pair = sorted([num_a, num_b])
+                if pair not in zero_pairs:
+                    zero_pairs.append(pair)
 
-    return []
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # NOTE FOR LESLIE
+    # There has to be a better way to do this. I tried passing the individual pairs to a set t eliminate duplicates,
+    # but I kept getting errors that lists aren't a 'hashable' type and therefore can't be individual items in a set.
+    # As a result, the only way I could think of was yet another 'if statement'
+
+    return sorted(zero_pairs)
 
 
 def kids_game(names):
@@ -219,8 +284,40 @@ def kids_game(names):
     a dictionary (with the super-fast lookup they provide) can help;
     good solutions here will definitely require a dictionary.
     """
+    word_options = {}
 
-    return []
+    #loops through 'names' from the second word onwards
+    for name in names[1:]:
+        key = name[0]
+        # evaluates of the first letter of 'name' being looped through is a key in the dictionary 'word_options'
+        # if it exists, it appends 'name' to the current list that is a value for that key.
+        # if it doesn't exist, it creates the key-value pair.
+        if key in word_options:
+            word_options[key].append(name)
+        else:
+            word_options[key] = [name]
+    # assigns the first word in 'names' to be the first word in 'sentence'
+    sentence = [names[0]]
+
+    # loops through a sentence while it is creating itself to choose the next word
+    for word in sentence:
+        # picks the last letter of the last word in the sentence to serve as the first letter of the next word.
+        starter = word[-1]
+
+        if starter in word_options:
+            value = word_options[starter]
+            next_word = value[0]
+            # checks if there is more than word that starts with the letter serving as a key, and removes either the
+            # key or the value accordingly
+
+            if len(value) > 1:
+                value.remove(next_word)
+            if len(value) == 1:
+                del word_options[starter]
+
+            sentence.append(next_word)
+
+    return sentence
 
 
 #####################################################################
