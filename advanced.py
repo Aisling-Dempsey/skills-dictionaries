@@ -29,8 +29,33 @@ def top_chars(phrase):
     Do not count spaces, but count all other characters.
 
     """
+    phrase = phrase.split()
+    letter_counts = {}
 
-    return []
+    # loops through phrase and adds word name to key with the length of the word. If no such key exists, it is created
+    for word in phrase:
+        for letter in word:
+            if letter in letter_counts:
+                letter_counts[letter] = letter_counts[letter] + 1
+            else:
+                letter_counts[letter] = 1
+
+    most_used = []
+    # loops through each key in the dictionary of usage counts and checks if it has the highest usage count.
+    # if it does, it replaces the old elements in the list. If it is used as much as the currently most-used letter,
+    # it is appended to the list.
+    for key in letter_counts:
+        if most_used == []:
+            most_used.append(key)
+        elif letter_counts[key] > letter_counts[most_used[0]]:
+            most_used = [key]
+        elif letter_counts[key] == letter_counts[most_used[0]]:
+            most_used.append(key)
+
+    return sorted(most_used)
+
+
+
 
 
 def word_length_sorted(words):
@@ -48,8 +73,19 @@ def word_length_sorted(words):
         >>> word_length_sorted(["ok", "an", "apple", "a", "day"])
         [(1, ['a']), (2, ['an', 'ok']), (3, ['day']), (5, ['apple'])]
     """
+    word_length = {}
+    # checks if the length of the word is in the dictionary as a key, if so, appends the word to the value list,
+    # if not, creates a key with the word as a single element of a list as a value. Sorts the value list each word.
+    for word in words:
+        key = len(word)
+        if key in word_length:
+            word_length[key].append(word)
+        else:
+            word_length[key] = [word]
+        word_length[key].sort()
 
-    return []
+    # returns a sorted list of tuples taken from the key-value pairs in 'word_length'
+    return sorted(word_length.items())
 
 
 #####################################################################
